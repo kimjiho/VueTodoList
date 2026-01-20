@@ -1,5 +1,5 @@
 <script setup>
-import { useSettingsThemeStore } from '@/stores/counter'
+import { useSettingsThemeStore } from '@/stores/stores'
 import { ref } from 'vue'
 
 const settingsThemeStore = useSettingsThemeStore()

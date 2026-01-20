@@ -1,5 +1,5 @@
 <script setup>
-import { useSettingsThemeStore } from '@/stores/counter'
+import { useSettingsThemeStore } from '@/stores/stores'
 
 const settingsThemeStore = useSettingsThemeStore()
 const currentTheme = settingsThemeStore.theme

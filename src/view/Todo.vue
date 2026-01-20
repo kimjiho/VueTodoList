@@ -12,9 +12,7 @@
     </div>
     <hr />
 
-    <div v-if="loading">
-        Loading 중...
-    </div>
+    <Loading v-if="loading" />
 
     <div v-else-if="error" message="error.message">
         Error 발생: {{ error.message }}
@@ -25,17 +23,9 @@
     </template>
 
     <template v-else>
-        <div class="row">
-            <div class="col-12" v-for="(item, index) in posts" :key="index">            
-                <div :class="cardClass">
-                    <div class="card-header">
-                        {{ item.title }}
-                    </div>
-                </div>
-            </div>
-        </div>
-    
-        <paging 
+        <CardItem :posts="posts" @delete-action="deleteAction" @modify-action="modifyAction"/>
+
+        <Paging 
             :current-page="params._page" 
             :page-count="pageCount"
             @page="(page) => (params._page = page)"/>
@@ -44,14 +34,11 @@
 
 <script setup>
 import { computed, ref } from 'vue';
-import { getTodos, createTodo } from '@/api/todos';
-import { useSettingsThemeStore } from '@/stores/counter'
-import paging from '@/components/paging.vue';
+import { createTodo, deleteTodo } from '@/api/todos';
 import { useAxios } from '@/composables/hooks/useAxios';
-
-const settingsThemeStore = useSettingsThemeStore()
-const currentTheme = settingsThemeStore.currentTheme
-const cardClass = currentTheme === 'light' ? 'card text-bg-light mb-3' : 'card text-bg-dark mb-3';
+import Paging from '@/components/paging.vue';
+import Loading from '@/components/Loading.vue';
+import CardItem from '@/components/CardItem.vue';
 
 const newParams = ref({
     title: ''
@@ -61,16 +48,16 @@ const newParams = ref({
 
 const params = ref({
   _per_page: 3,
-  _page: 1
+  _page: 1,
+  _sort: '-createdAt'
 })
 
-const { totalCount, data: posts, error, loading, response } = useAxios('/todos', { method: 'GET', params })
+const { totalCount, data: posts, error, loading, response, execute } = useAxios('/todos', { method: 'GET', params })
 console.log('response:', response);
 
 const isExist = computed(() => posts.value && posts.value.length > 0)
 
 // pagination
-//const totalCount = computed(() => response.data.value.items)
 const pageCount = computed(() => Math.ceil(totalCount.value / params.value._per_page))
 
 // add
@@ -87,16 +74,31 @@ const addTodo = async () => {
 
     try {
         const response = await createTodo({...newParams.value, createdAt: Date.now()});
-        console.log('Todo created:', response.data);
-        //fetchTodos()
+        console.log('Todo created:', response.data);        
     } catch (error) {
-        console.error('Error creating todo:', error);
-        //todo Alert, Toast
-    } finally {
-        //emit('update:title', '');
+        console.error('Error creating todo:', error);        
+    } finally {        
         newParams.value.title = '';
         params.value._page = 1; // 첫 페이지로 이동
+        execute()
     }
+}
+
+const deleteAction = async (id) => {
+    if(!confirm('삭제 하시겠습니까?')) return
+
+    try {
+        const response = await deleteTodo(id)
+        console.log('Todo delete:', response.data);
+    } catch (error) {
+        console.error('Error delete todo:', error);        
+    } finally {
+        execute()
+    }
+}
+
+const modifyAction = async (id) => {
+    alert('준비중입니다.')
 }
 
 </script>
