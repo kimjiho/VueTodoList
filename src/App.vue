@@ -1,20 +1,18 @@
 <script setup>
+import Header from './components/Header.vue';
 import Main from './view/Main.vue';
 </script>
 
 <template>
-  <header>
-    <h1 class="text-center py-2">Vue Todo List</h1>
-    <hr />
-  </header>
-
-  <main class="background">    
-    <Main/>
-  </main>
+  <Header/>
+  <div class="back-ground">
+    <Main />
+  </div>
 </template>
 
+
 <style scoped>
-.background {
+.back-ground {
   background-color: #f8f9fa;
   padding: 20px;
 }

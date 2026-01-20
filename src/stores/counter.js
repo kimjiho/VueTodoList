@@ -10,3 +10,17 @@ export const useCounterStore = defineStore('counter', () => {
 
   return { count, doubleCount, increment }
 })
+
+export const useSettingsThemeStore = defineStore('settingsTheme', {
+  state: () => ({
+    theme: 'light',
+  }),
+  getters: {
+    currentTheme: (state) => state.theme,
+  },
+  actions: {
+    toggleTheme() {
+      this.theme = this.theme === 'light' ? 'dark' : 'light'
+    },
+  },
+})
