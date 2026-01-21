@@ -1,28 +1,27 @@
-<template>
-    <div>
-        <label for="titleLabel" class="form-label">투두리스트</label>        
-        <div class="row">
-            <div class="col-auto">
-                <input v-model="newParams.title" type="text" placeholder="Todo List 를 작성하세요." class="form-control">        
-            </div>
-            <div class="col-auto">
-                <button @click="addTodo" class="btn btn-dark">추가</button>
-            </div>
-        </div>
-    </div>
-    <hr />
-
+<template>    
     <Loading v-if="loading" />
 
-    <div v-else-if="error" message="error.message">
-        Error 발생: {{ error.message }}
-    </div>
+    <Error v-else-if="error" :message="error.message"/>    
 
     <template v-else-if="!isExist">
       <p class="text-center py-5 text-muted">게시글이 존재하지 않습니다.</p>
     </template>
 
     <template v-else>
+        <div>
+            <label for="titleLabel" class="form-label">투두리스트</label>        
+            <div class="row">
+                <div class="col-auto">
+                    <input v-model="newParams.title" type="text" placeholder="Todo List 를 작성하세요." class="form-control">        
+                </div>
+                <div class="col-auto">
+                    <button @click="addTodo" class="btn btn-dark">추가</button>
+                </div>
+            </div>
+        </div>
+        
+        <hr />
+
         <CardItem :posts="posts" @delete-action="deleteAction" @modify-action="modifyAction"/>
 
         <Paging 
@@ -36,9 +35,10 @@
 import { computed, ref } from 'vue';
 import { createTodo, deleteTodo } from '@/api/todos';
 import { useAxios } from '@/composables/hooks/useAxios';
-import Paging from '@/components/paging.vue';
+import Paging from '@/components/Paging.vue';
 import Loading from '@/components/Loading.vue';
 import CardItem from '@/components/CardItem.vue';
+import Error from '@/components/Error.vue';
 
 const newParams = ref({
     title: ''
